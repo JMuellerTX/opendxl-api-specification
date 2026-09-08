@@ -1,0 +1,58 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+  schedule:
+    - cron:  '0 0 * * *'
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install
+      run: pip install jsonschema pyyaml
+
+    # Offline: the vendored OpenAPI schema is what the references resolve
+    # against, so the result of this job cannot change because a third-party
+    # host changed. That is not a hypothetical - this schema pointed at
+    # http://swagger.io/v2/schema.json for years after that URL stopped
+    # existing, and nothing noticed, because nothing tried to resolve it.
+    - name: Schema and examples
+      run: python tools/validate.py
+
+    # Separate job step, and deliberately allowed to fail on its own: it is the
+    # only thing here that talks to the network, and "the OpenAPI Initiative
+    # published a new revision" is news, not a broken repository.
+    - name: The vendored OpenAPI schema still matches the published one
+      id: online
+      continue-on-error: true
+      run: python tools/validate.py --online
+
+    - name: Say so when the vendored copy has drifted
+      if: steps.online.outcome == 'failure'
+      run: |
+        {
+          echo "## The vendored OpenAPI schema no longer matches the published one"
+          echo
+          echo "\`schemas/vendor/\` holds a dated OpenAPI schema, and the copy and the"
+          echo "published document have diverged. Either the Initiative revised that dated"
+          echo "URL, or the copy was edited. Compare them before changing anything:"
+          echo
+          echo '```'
+          echo "python tools/validate.py --online"
+          echo '```'
+          echo
+          echo "Validation itself is unaffected - it runs against the copy."
+        } >> "$GITHUB_STEP_SUMMARY"

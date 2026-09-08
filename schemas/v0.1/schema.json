@@ -1,12 +1,17 @@
 {
   "title": "OpenDXL API Schema",
-  "id": "https://opendxl.github.io/opendxl-api-specification/v0.1/schema.json#",
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "$id": "https://opendxl.github.io/opendxl-api-specification/v0.1/schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Dialect: JSON Schema 2020-12, the dialect OpenAPI 3.1 and later are built on. External references point at the OpenAPI Specification 3.2 schema; the Swagger 2.0 schema this document used until 2026 has not been reachable since the specification moved to the OpenAPI Initiative.",
   "required": [
     "openDxlApi",
     "info"
   ],
-  "definitions": {
+  "$defs": {
+    "description": {
+      "description": "A human readable description. Taken from the JSON Schema meta-schema until 2026; 2020-12 splits that meta-schema into vocabularies, so the annotation is defined here rather than pointed at an implementation detail of another document.",
+      "type": "string"
+    },
     "stringArray": {
       "description": "Similar to the stringArray definition in JSON Schema Draft 4 but allows for the array to be empty",
       "type": "array",
@@ -21,7 +26,7 @@
       "description": "An individual 'other field' in a DXL message. See 'otherFields' in the 'message' property.",
       "properties": {
         "description": {
-          "$ref": "http://json-schema.org/draft-04/schema#/properties/description"
+          "$ref": "#/$defs/description"
         },
         "example": {
           "description": "Example value for this 'other field'",
@@ -40,22 +45,22 @@
       "description": "Common properties for all messages which can be sent on a DXL fabric",
       "properties": {
         "payload": {
-          "$ref": "http://swagger.io/v2/schema.json#/definitions/schema"
+          "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/schema"
         },
         "otherFields": {
           "type": "object",
           "description": "The 'other fields' which can appear in a DXL message. 'other fields' add 'header'-like name/value pairs without requiring modifications to be made to the payload.",
           "properties": {
             "additionalProperties": {
-              "$ref": "#/definitions/otherField"
+              "$ref": "#/$defs/otherField"
             }
           }
         },
         "description": {
-          "$ref": "http://json-schema.org/draft-04/schema#/properties/description"
+          "$ref": "#/$defs/description"
         },
         "externalDocs": {
-          "$ref": "http://swagger.io/v2/schema.json#/definitions/externalDocs"
+          "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/external-documentation"
         }
       }
     },
@@ -64,7 +69,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/message"
+          "$ref": "#/$defs/message"
         }
       ]
     },
@@ -73,20 +78,20 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/message"
+          "$ref": "#/$defs/message"
         },
         {
           "type": "object",
           "properties": {
             "response": {
-              "$ref": "#/definitions/response"
+              "$ref": "#/$defs/response"
             },
             "errorResponses": {
               "description": "Map of integer-based error codes to corresponding 'response' objects. The map describes the possible DXL error response messages which can be returned for a failed request.",
               "type": "object",
               "patternProperties": {
                 "^-?[0-9]+$": {
-                  "$ref": "#/definitions/response"
+                  "$ref": "#/$defs/response"
                 }
               },
               "additionalProperties": false
@@ -99,7 +104,7 @@
       "description": "A map of DXL request topic names to corresponding 'request' objects",
       "type": "object",
       "additionalProperties": {
-        "$ref": "#/definitions/request"
+        "$ref": "#/$defs/request"
       }
     },
     "event": {
@@ -107,7 +112,7 @@
       "type": "object",
       "allOf": [
         {
-          "$ref": "#/definitions/message"
+          "$ref": "#/$defs/message"
         },
         {
           "type": "object",
@@ -125,7 +130,7 @@
       "description": "A map of DXL event topic names to corresponding 'event' objects",
       "type": "object",
       "additionalProperties": {
-        "$ref": "#/definitions/event"
+        "$ref": "#/$defs/event"
       }
     },
     "serviceMetadataItem": {
@@ -133,7 +138,7 @@
       "description": "An individual 'item' in a DXL service 'metadata' object. See 'metadata' in the 'service' property.",
       "properties": {
         "description": {
-          "$ref": "http://json-schema.org/draft-04/schema#/properties/description"
+          "$ref": "#/$defs/description"
         },
         "example": {
           "description": "Example value for this metadata item",
@@ -147,10 +152,10 @@
       "type": "object",
       "properties": {
         "info": {
-          "$ref": "http://swagger.io/v2/schema.json#/definitions/info"
+          "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/info"
         },
         "externalDocs": {
-          "$ref": "http://swagger.io/v2/schema.json#/definitions/externalDocs"
+          "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/external-documentation"
         },
         "requests": {
           "description": "A map of DXL request topic names to corresponding request definitions under '#/requests' in this document",
@@ -159,7 +164,7 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "http://swagger.io/v2/schema.json#/definitions/jsonReference"
+                "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/reference"
               },
               {
                 "properties": {
@@ -176,7 +181,7 @@
           "type": "object",
           "properties": {
             "additionalProperties": {
-              "$ref": "#/definitions/serviceMetadataItem"
+              "$ref": "#/$defs/serviceMetadataItem"
             }
           }
         }
@@ -187,7 +192,7 @@
       "description": "A map of DXL 'service type' strings to corresponding 'service' objects",
       "type": "object",
       "additionalProperties": {
-        "$ref": "#/definitions/service"
+        "$ref": "#/$defs/service"
       }
     },
     "solution": {
@@ -195,10 +200,10 @@
       "type": "object",
       "properties": {
         "info": {
-          "$ref": "http://swagger.io/v2/schema.json#/definitions/info"
+          "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/info"
         },
         "externalDocs": {
-          "$ref": "http://swagger.io/v2/schema.json#/definitions/externalDocs"
+          "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/external-documentation"
         },
         "events": {
           "description": "A map of DXL event topic names to corresponding event definitions under '#/events' in this document",
@@ -207,7 +212,7 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "http://swagger.io/v2/schema.json#/definitions/jsonReference"
+                "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/reference"
               },
               {
                 "properties": {
@@ -226,7 +231,7 @@
             "type": "object",
             "allOf": [
               {
-                "$ref": "http://swagger.io/v2/schema.json#/definitions/jsonReference"
+                "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/reference"
               },
               {
                 "properties": {
@@ -251,28 +256,32 @@
       ]
     },
     "info": {
-      "$ref": "http://swagger.io/v2/schema.json#/definitions/info"
+      "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/info"
     },
     "externalDocs": {
-      "$ref": "http://swagger.io/v2/schema.json#/definitions/externalDocs"
+      "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/external-documentation"
     },
     "definitions": {
-      "$ref": "http://swagger.io/v2/schema.json#/definitions/definitions"
+      "description": "A map of names to schemas which can be referenced from message payloads. The Swagger 2.0 schema had a definition for this map; OpenAPI 3.x keeps the same idea under components/schemas, so the map is spelled out here in terms of the OpenAPI Schema Object.",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "https://spec.openapis.org/oas/3.2/schema/2025-09-17#/$defs/schema"
+      }
     },
     "events": {
-      "$ref": "#/definitions/events"
+      "$ref": "#/$defs/events"
     },
     "requests": {
-      "$ref": "#/definitions/requests"
+      "$ref": "#/$defs/requests"
     },
     "services": {
-      "$ref": "#/definitions/services"
+      "$ref": "#/$defs/services"
     },
     "solutions": {
       "description": "A map of DXL solution names to corresponding 'solution' objects",
       "type": "object",
       "additionalProperties": {
-        "$ref": "#/definitions/solution"
+        "$ref": "#/$defs/solution"
       }
     }
   },
